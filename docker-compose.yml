@@ -1,0 +1,44 @@
+version: '3.8'
+
+services:
+  # Backend API
+  api:
+    build: .
+    container_name: qso-card-api
+    ports:
+      - "3000:3000"
+    environment:
+      - NODE_ENV=production
+      - PORT=3000
+      - QRZ_USERNAME=${QRZ_USERNAME}
+      - QRZ_PASSWORD=${QRZ_PASSWORD}
+      - EMAIL_SERVICE=${EMAIL_SERVICE:-gmail}
+      - EMAIL_ADDRESS=${EMAIL_ADDRESS}
+      - EMAIL_PASSWORD=${EMAIL_PASSWORD}
+      - ALLOWED_ORIGINS=http://localhost:3000,http://localhost:5173
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "wget", "--quiet", "--tries=1", "--spider", "http://localhost:3000/health"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # Frontend (optional - for development)
+  web:
+    image: node:18-alpine
+    container_name: qso-card-web
+    working_dir: /app
+    ports:
+      - "5173:5173"
+    volumes:
+      - ./frontend:/app
+    environment:
+      - VITE_API_URL=http://localhost:3000
+    command: >
+      sh -c "npm install && npm run dev"
+    depends_on:
+      api:
+        condition: service_healthy
+
+volumes:
+  api-logs:
