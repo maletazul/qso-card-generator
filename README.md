@@ -414,4 +414,4 @@ Built for radioamateurs by radioamateurs.
 ---
 
 **Last updated:** May 2026  
-**Author:** CT3AAN - Associação de Radioamadores do Oeste (ARADO)
+**Author:** CR7BUI - Associação de Radioamadores do Oeste (ARADO)
